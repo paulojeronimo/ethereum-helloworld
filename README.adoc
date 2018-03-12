@@ -24,6 +24,14 @@ NOTE: If you are running on a macOS, please https://gist.github.com/Rican7/44081
 * You will need {solc} installed (see the http://solidity.readthedocs.io/en/develop/installing-solidity.html[installation instructions]).
 * To run the <<nodejs-client,Node.js client example>> you will need {nodejs} (obvious) and {yarn} installed.
 
+[TIP]
+.Arch Linux installation procedure:
+====
+----
+$ sudo pacman -S geth solidity nodejs yarn
+----
+====
+
 == Download
 
 Clone this repository:
