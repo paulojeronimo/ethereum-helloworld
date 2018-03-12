@@ -1,0 +1,17 @@
+#!/bin/bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")"; pwd`/..
+cd "$BASE_DIR"
+source config
+
+geth  --networkid 1234\
+      --nodiscover\
+      --datadir $geth_dir\
+      --unlock 0,1\
+      --password $geth_passwords\
+      --rpc\
+      --rpcaddr localhost\
+      --rpcport "8545"\
+      --rpccorsdomain "*"\
+      console 2>> $geth_log

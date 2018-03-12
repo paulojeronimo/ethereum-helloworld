@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")"; pwd`/..
+cd "$BASE_DIR"
+source config
+
+gitignore=$(cat .gitignore)
+for f in $gitignore
+do
+  [ "$f" == "README.html" ] && continue
+  rm -rf "$f"
+done

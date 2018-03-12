@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")"; pwd`/..
+cd "$BASE_DIR"
+source config
+
+geth --datadir eth_private init eth_private/genesis.json

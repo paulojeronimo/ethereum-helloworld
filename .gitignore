@@ -1,0 +1,11 @@
+README.html
+
+compile.log
+
+eth_private/geth
+eth_private/geth.stderr.log
+eth_private/history
+
+js/HelloWorld.js
+
+node_modules

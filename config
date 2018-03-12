@@ -1,0 +1,8 @@
+#!/bin/bash
+
+DEBUG=${DEBUG:-false}
+geth_dir=eth_private
+geth_passwords=${geth_dir}/passwords.txt
+geth_log=${geth_dir}/geth.stderr.log
+
+$DEBUG && set -x || true

@@ -1,0 +1,15 @@
+{
+  "name": "ethereum-helloworld",
+  "version": "1.0.0",
+  "description": "Ethereum \"Hello world\" application",
+  "author": "Paulo Jerônimo",
+  "license": "ISC",
+  "dependencies": {
+    "solc": "^0.4.20",
+    "web3": "^0.20.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulojeronimo/ethereum-helloworld.git"
+  }
+}

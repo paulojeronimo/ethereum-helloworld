@@ -1,0 +1,259 @@
+= Ehtereum "Hello world" application
+Paulo Jerônimo <paulojeronimo@gmail.com>; {localdatetime}
+:toc:
+:icons: font
+:experimental:
+
+:geth: https://geth.ethereum.org/[geth]
+:solc: https://solidity.readthedocs.io[solc]
+:vim: https://www.vim.org[vim]
+:web3_js: https://github.com/ethereum/web3.js/[web3.js]
+:web3_js_docs: https://github.com/ethereum/wiki/wiki/JavaScript-API
+:nodejs: https://nodejs.org[Node.js]
+:yarn: https://yarnpkg.com[Yarn]
+
+You can use this project to rapidly start an Ethereum "Hello world" application (using {geth} and {solc}) on your macOS (or Linux) operational system.
+
+== Prerequisites
+
+* You will need `Bash` version 4 installed.
+
+NOTE: If you are running on a macOS, please https://gist.github.com/Rican7/44081a9806595704fa7b289c32fcd62c[upgrade Bash].
+
+* You will need {geth} installed (see the https://github.com/ethereum/go-ethereum/wiki/Installing-Geth[installation instructions]).
+* You will need {solc} installed (see the http://solidity.readthedocs.io/en/develop/installing-solidity.html[installation instructions]).
+* To run the <<nodejs-client,Node.js client example>> you will need {nodejs} (obvious) and {yarn} installed.
+
+== Download
+
+Clone this repository:
+
+----
+$ git clone https://github.com/paulojeronimo/ethereum-helloworld
+$ cd ethereum-helloworld
+----
+
+== Step by step commands
+
+[[step1]]
+=== Step 1: Initialize an Ethereum private network
+
+----
+$ ./bin/init
+----
+
+With link:bin/init[] script we are creating a private ethereum blockchain using this link:eth_private/genesis.json[] file.
+
+[[step2]]
+=== Step 2: Compile the solidity contract
+
+Our `Hello World` contract is link:contracts/HelloWorld.sol[].
+
+Let's compile it:
+
+----
+$ ./bin/compile
+----
+
+link:bin/compile[This script] compiles the contract (using {solc}) and generates the file `js/HelloWorld.js`.
+
+TIP: You can type `DEBUG=true ./bin/compile` to see what is happening behind the scenes.
+
+Now we can see the generated file by using {vim}:
+
+----
+$ view js/HelloWorld.js
+----
+
+This file uses the _Ethereum JavaScript API_ ({web3_js}) to parse the https://solidity.readthedocs.io/en/develop/abi-spec.html[contract ABI]. See its {web3_js_docs}[documentation].
+
+[[step3]]
+=== Step 3: Running our contract
+
+Open `geth` console:
+
+----
+$ ./bin/open-console
+----
+
+[NOTE]
+====
+The link:bin/open-console[] will start `geth`:
+
+. Within `eth_private` directory;
+. Using the network id 1234;
+. Unlocking two (2) pre-existing accounts (0,1) using the passwords specified inside link:eth_private/passwords.txt[] file.
+
+====
+
+In another shell open the console error output:
+
+----
+$ ./bin/show-console-err
+----
+
+Back to console opened with `bin/open-console`, type:
+
+----
+> miner.start()
+> loadScript("js/HelloWorld.js")
+> helloWorld.getMessage()
+"HelloWorld!!"
+> miner.stop()
+> helloWorld.getMessage()
+----
+
+== Going further
+
+=== Some other console commands
+
+----
+> helloWorld.transactionHash
+> helloWorld.address
+> helloWorld.abi
+----
+
+----
+> helloWorld.setMessage("Hello Paulo!")
+Error: invalid address
+    at web3.js:3930:15
+    at web3.js:3756:20
+    at web3.js:5025:28
+    at map (<native code>)
+    at web3.js:5024:12
+    at web3.js:5050:18
+    at web3.js:5075:23
+    at web3.js:4137:16
+    at apply (<native code>)
+    at web3.js:4223:16
+----
+
+----
+> eth.defaultAccount = eth.accounts[0]
+> helloWorld.setMessage("Hello Paulo!")
+"0xfd222076b8f8d406386b8639ba4c3383c5b163c394de51c9f19ec0e26b46b1a5"
+> helloWorld.getMessage()
+"Hello world!"
+> eth.mining
+false
+----
+
+----
+> eth.pendingTransactions
+[{
+    blockHash: null,
+    blockNumber: null,
+    from: "0xb647f8302824903199a2137d38d882b734c38bb3",
+    gas: 90000,
+    gasPrice: 18000000000,
+    hash: "0xfd222076b8f8d406386b8639ba4c3383c5b163c394de51c9f19ec0e26b46b1a5",
+    input: "0x368b87720000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000c48656c6c6f205061756c6f210000000000000000000000000000000000000000",
+    nonce: 1,
+    r: "0x54e4453c5a6247df66d9bf8f20e20dffeb960d0e39f40fd38088f6767c077ffa",
+    s: "0x5b432fc19ab4a8fb951d9443cb743de6aaba50a033b991d98d9b8987aacbdf2c",
+    to: "0xb25267d8bf59e97b11f6be095de267a28fb03b0a",
+    transactionIndex: 0,
+    v: "0x1c",
+    value: 0
+}]
+> miner.start()
+> eth.pendingTransactions
+[]
+> helloWorld.getMessage()
+"Hello Paulo!"
+----
+
+----
+> helloWorldCopy = helloWorldContract.at(helloWorld.address)
+> helloWorldCopy.getMessage()
+"Hello Paulo!"
+> helloWorld.setMessage("Hello Copy!")
+> helloWorldCopy.getMessage()
+"Hello Copy!"
+----
+
+----
+> eth.accounts
+> helloWorldNew = helloWorldContract.new({from: eth.accounts[1], data: "0x" + helloWorldSolcOutput.contracts["contracts/HelloWorld.sol:HelloWorld"].bin, gas: 470000});
+Error: insufficient funds for gas * price + value
+    at web3.js:3143:20
+    at web3.js:6347:15
+    at web3.js:5081:36
+    at web3.js:3021:24
+    at <anonymous>:1:17
+> eth.getBalance(eth.accounts[0]
+620000000000000000000
+> eth.getBalance(eth.accounts[1]
+0
+> ammount = web3.toWei(0.01, "ether")
+> eth.sendTransaction({from:eth.accounts[0],to:eth.accounts[1],value:ammount})
+> eth.getBalance(eth.accounts[1])
+> helloWorldNew = helloWorldContract.new({from: eth.accounts[1], data: "0x" + helloWorldSolcOutput.contracts["contracts/HelloWorld.sol:HelloWorld"].bin, gas: 470000});
+> helloWorldNew.address
+> helloWorldNew.getMessage()
+"Hello world!"
+> helloWorldNew.setMessage(helloWorld.getMessage())
+> helloWorldNew.getMessage()
+----
+
+----
+> transaction = helloWorld.setMessage("Getting transaction")
+> eth.getTransaction(transaction)
+> eth.getTransaction(transaction).input
+> web3.toAscii(eth.getTransaction(transaction).input)
+----
+
+[[nodejs-client]]
+=== Running a Node.js client
+
+-----
+$ view package.json
+$ yarn install
+-----
+
+----
+$ node js/HelloWorldClient.js 'Hello, Paulo Jeronimo, from Ethereum!'
+web3.version.api: 0.20.5
+web3.version.ethereum: 0x3f
+web3.version.network: 1234
+web3.version.node: Geth/v1.8.2-stable/darwin-amd64/go1.10
+contract transaction created!
+transactionHash: 0x6aeb4853d1abf91610f6128b57c23b5f4b0d8206292731f0906d896851b76d7b
+contract transaction mined!
+address: 0xb25267d8bf59e97b11f6be095de267a28fb03b0a
+getMessage(): Hello world!
+setMessage("Hello, Paulo Jeronimo, from Ethereum!") transaction: 0x1e46c13a1ec2e627eed4ec936d43a131606ac329c5ec4fba82d3e1ac8fe98e6d
+----
+
+----
+$ node js/HelloWorldClient.js 0xb25267d8bf59e97b11f6be095de267a28fb03b0a
+web3.version.api: 0.20.5
+web3.version.ethereum: 0x3f
+web3.version.network: 1234
+web3.version.node: Geth/v1.8.2-stable/darwin-amd64/go1.10
+address: 0xb25267d8bf59e97b11f6be095de267a28fb03b0a
+getMessage(): Hello, Paulo Jeronimo, from Ethereum!
+----
+
+----
+$ view js/HelloWorldClient.js
+----
+
+== Finishing
+
+Stop the console (oppened with `./bin/open-console`): type kbd:[Ctrl+d] or `exit`.
+
+Close the console error log (opened with `./bin/show-console-err`): tpype kbd:[Ctrl+c].
+
+== Restart
+
+If you want to restart all these steps from beginning (<<step1,Step 1>>) type:
+
+----
+$ ./bin/clear
+----
+
+== Some notes
+
+* https://github.com/ethereum/go-ethereum/wiki/Contract-Tutorial#installing-a-compiler[Installing a compiler] doesn't work anymore (documentation is out of date https://github.com/ethereum/go-ethereum/issues/14535#issuecomment-364702150[like reported in this issue]).
+* Public testnet faucet: http://faucet.ropsten.be:3001/
