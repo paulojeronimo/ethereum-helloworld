@@ -1,4 +1,4 @@
-= Ehtereum "Hello world" application
+= Ethereum "Hello world" application
 Paulo Jerônimo <paulojeronimo@gmail.com>; {localdatetime}
 :toc:
 :icons: font
