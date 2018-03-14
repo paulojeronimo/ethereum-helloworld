@@ -295,7 +295,7 @@ $ vim -p Transfering src/main/java/com/paulojeronimo/web3j_demo/Transfering.java
 ----
 $ cd ..
 $ ./bin/web3j-install
-$ tree downloads/
+$ tree web3j-2.3.1/
 $ ls -l bin/
 $ cd java
 $ ./HelloWorldClient generate
@@ -347,6 +347,19 @@ While waiting for synchronization (it will get some time) open the https://fauce
 
 After synchronization, open another shell and run `js/HelloWorldClient.js` like you did before in "<<step5>>".
 
+[NOTE]
+====
+The process of synchronization only will be started after you see this message on the log:
+
+----
+INFO [03-14|19:49:36] Block synchronisation started 
+----
+
+On Rinkeby you can't start mine. So, the only way to funding an account is to receive from other (in case of this tutorial, using a faucet).
+
+The entire synchronization of rinkeby will download about 4 GB of data.
+====
+
 Verify your transactions in the https://rinkeby.etherscan.io/[rinkeby explorer].
 
 TIP: You can use link:bin/rinkeby-backup[] to backup your downloaded rinkeby blockchain and link:bin/rinkeby-restore[] to restore it.
@@ -355,7 +368,7 @@ TIP: You can use link:bin/rinkeby-backup[] to backup your downloaded rinkeby blo
 
 Stop the console (oppened with `./bin/open-console`): type kbd:[Ctrl+d] or `exit`.
 
-Close the console error log (opened with `./bin/show-console-err`): tpype kbd:[Ctrl+c].
+Close the console error log (opened with `./bin/show-console-err`): type kbd:[Ctrl+c].
 
 == Restart
 
