@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
+cd "$BASE_DIR"
+source config
+
+if [ ! -d "$rinkeby_home" ]
+then
+    echo "Ethereum rinkeby dir ($rinkeby_home) does not exist!"
+    exit 1
+fi
+
+cd "`dirname "$rinkeby_home"`"
+
+rinkeby_dir=`basename "$rinkeby_home"`
+backup="$backup_dir/$rinkeby_dir".tar.gz
+
+[ -f "$backup" ] && mv "$backup" "$backup_dir/$rinkeby_dir.`date +%s`".tar.gz
+tar cvfz "$backup" "$rinkeby_dir"/

@@ -1,0 +1,16 @@
+#!/bin/bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
+cd "$BASE_DIR"
+source config
+
+geth  --rinkeby \
+      --datadir "$rinkeby_home" \
+      --rpc \
+      --rpcaddr localhost \
+      --rpcport "8545" \
+      --rpccorsdomain "*" \
+      console 2>> rinkeby.log
+
+# vim: sw=2 ts=2 et

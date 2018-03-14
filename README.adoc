@@ -11,21 +11,28 @@ Paulo Jerônimo <paulojeronimo@gmail.com>; {localdatetime}
 :web3_js_docs: https://github.com/ethereum/wiki/wiki/JavaScript-API
 :nodejs: https://nodejs.org[Node.js]
 :yarn: https://yarnpkg.com[Yarn]
+:jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java Development Kit]
 
 You can use this project to rapidly start an Ethereum "Hello world" application (using {geth} and {solc}) on your macOS (or Linux) operational system.
 
 == Prerequisites
 
-* You will need `Bash` version 4 installed.
+To read more about what is a blockchain and, also, how to create and test a private blockchain with two (2) nodes see the project http://github.com/paulojeronimo/ethereum-tutorial-cotidiano[ethereum-tutorial-cotidiano]. I'm assuming that you already saw this project.
+
+You will need `Bash` version 4 installed.
 
 NOTE: If you are running on a macOS, please https://gist.github.com/Rican7/44081a9806595704fa7b289c32fcd62c[upgrade Bash].
 
-* You will need {geth} installed (see the https://github.com/ethereum/go-ethereum/wiki/Installing-Geth[installation instructions]).
-* You will need {solc} installed (see the http://solidity.readthedocs.io/en/develop/installing-solidity.html[installation instructions]).
-* To run the <<nodejs-client,Node.js client example>> you will need {nodejs} (obvious) and {yarn} installed.
+You will need {geth} installed (see the https://github.com/ethereum/go-ethereum/wiki/Installing-Geth[installation instructions]).
+
+You will need {solc} installed (see the http://solidity.readthedocs.io/en/develop/installing-solidity.html[installation instructions]).
+
+To run the <<step5,Node.js client example>> you will need {nodejs} (obvious) and {yarn} installed.
+
+To run the <<step6,Java client example>> you will need {jdk} installed and {maven} installed.
 
 [TIP]
-.Arch Linux installation procedure:
+.Arch Linux installation procedure for all prerequisites:
 ====
 ----
 $ sudo pacman -S geth solidity nodejs yarn
@@ -55,25 +62,41 @@ With link:bin/init[] script we are creating a private ethereum blockchain using 
 [[step2]]
 === Step 2: Compile the solidity contract
 
-Our `Hello World` contract is link:contracts/HelloWorld.sol[].
+Our `Hello World` contract is link:contracts/HelloWorld.sol[]. Here is its code:
 
-Let's compile it:
+[source,solidty]
+.contracts/HelloWorld.sol
+----
+include::contracts/HelloWorld.sol[]
+----
+
+TIP: `HelloWorld.sol` is a source code written in https://solidity.readthedocs.io/[Solidity language]. I recommend that you https://goo.gl/3dyy6k[see this playlist on YouTube] where the author did a good explanation about many aspects of this language (not too much covered in this "Hello World" because here we'll see only the basics).
+
+Let's compile it using the (`Bash`) script link:bin/compile[]:
 
 ----
 $ ./bin/compile
 ----
 
-link:bin/compile[This script] compiles the contract (using {solc}) and generates the file `js/HelloWorld.js`.
+TIP: You can type `DEBUG=true ./bin/compile` to see what is happening behind the scenes. Or, to debug all scripts in this project, you can use `export DEBUG=true` in your current shell.
 
-TIP: You can type `DEBUG=true ./bin/compile` to see what is happening behind the scenes.
+This script compiles the contract (using {solc}) and generates the file `js/HelloWorld.js`.
 
-Now we can see the generated file by using {vim}:
+The specific call to `solc` compile is shown in the lines below:
+
+[source,bash]
+.bin/compile
+----
+include::bin/compile[tags=solc]
+----
+
+After the compilation you can see the generated file by using {vim} (the best text editor of the world in my opinion):
 
 ----
-$ view js/HelloWorld.js
+$ vim -R js/HelloWorld.js
 ----
 
-This file uses the _Ethereum JavaScript API_ ({web3_js}) to parse the https://solidity.readthedocs.io/en/develop/abi-spec.html[contract ABI]. See its {web3_js_docs}[documentation].
+This file uses the _Ethereum JavaScript API_ ({web3_js}) to parse the https://solidity.readthedocs.io/en/develop/abi-spec.html[contract ABI]. See more about `web3j.js` in its {web3_js_docs}[documentation].
 
 [[step3]]
 === Step 3: Running our contract
@@ -111,9 +134,8 @@ Back to console opened with `bin/open-console`, type:
 > helloWorld.getMessage()
 ----
 
-== Going further
-
-=== Some other console commands
+[[step4]]
+=== Step 4: Running some other console commands
 
 ----
 > helloWorld.transactionHash
@@ -211,11 +233,10 @@ Error: insufficient funds for gas * price + value
 > web3.toAscii(eth.getTransaction(transaction).input)
 ----
 
-[[nodejs-client]]
-=== Running a Node.js client
+[[step5]]
+=== Step 5: Running a Node.js client
 
 -----
-$ view package.json
 $ yarn install
 -----
 
@@ -244,8 +265,91 @@ getMessage(): Hello, Paulo Jeronimo, from Ethereum!
 ----
 
 ----
-$ view js/HelloWorldClient.js
+$ vim -R -p package.json js/HelloWorldClient.js
 ----
+
+[[step6]]
+=== Step 6: Running a Java client
+
+----
+$ cd java
+$ mvn clean package
+$ ./VersionInfo
+...
+Client version: Geth/v1.8.2-stable/darwin-amd64/go1.10
+Network version: 1234
+...
+$ vim -p pom.xml VersionInfo src/main/java/com/paulojeronimo/web3j_demo/VersionInfo.java
+----
+
+----
+$ ./Transfering
+...
+Funds transfer completed...
+Hash: 0xb02b2d4af2786edfbe381f577bd32a86e64501ec320e35b8096b3d95562e153d
+Block number: 633
+...
+$ vim -p Transfering src/main/java/com/paulojeronimo/web3j_demo/Transfering.java
+----
+
+----
+$ cd ..
+$ ./bin/web3j-install
+$ tree downloads/
+$ ls -l bin/
+$ cd java
+$ ./HelloWorldClient generate
+$ ls -l target/solidity
+$ vim src/main/java/com/paulojeronimo/web3j_demo/generated/HelloWorld.java
+$ mvn clean package
+$ ./HelloWorldClient
+...
+contract transaction mined!
+address: 0xabbd7b79ac8b1157c6614a9558d30ca0a2beabad
+getMessage(): Hello world!
+setMessage("Hello, Paulo Jeronimo, from Ethereum (from Java)!") transaction: 0xe618d0395a81cee10508ec74a9ad100e322e837dd9ebacd55930128b429a4465
+
+$ ./HelloWorldClient 0xabbd7b79ac8b1157c6614a9558d30ca0a2beabad
+...
+getMessage(): Hello, Paulo Jeronimo, from Ethereum (from Java)!
+----
+
+[[step7]]
+=== Step 7: Using Ganache instead of Geth
+
+
+----
+# stop any previous geth instante that is running.
+
+# start ganache:
+$ ./node_modules/ganache-cli/build/cli.node.js
+
+# open another shell and run js/HelloWorldClient.js like in step5
+----
+
+
+[[step8]]
+=== Step 8: Deploy Hello World contract on Rinkeby network
+
+----
+# stop ganache-cli (started in the previous step)
+
+# open rinkeby console and type the folowing commands
+$ ./bin/rinkeby-console
+> personal.newAccount()
+Passphrase: 
+Repeat passphrase: 
+"0xa3ccb8974ef383fd06e434bd7fee2aa368b0c54e"
+> eth.syncing
+----
+
+While waiting for synchronization (it will get some time) open the https://faucet.rinkeby.io/[rinkeby faucet] and follow the instructions to get some Ether.
+
+After synchronization, open another shell and run `js/HelloWorldClient.js` like you did before in "<<step5>>".
+
+Verify your transactions in the https://rinkeby.etherscan.io/[rinkeby explorer].
+
+TIP: You can use link:bin/rinkeby-backup[] to backup your downloaded rinkeby blockchain and link:bin/rinkeby-restore[] to restore it.
 
 == Finishing
 
@@ -258,10 +362,14 @@ Close the console error log (opened with `./bin/show-console-err`): tpype kbd:[C
 If you want to restart all these steps from beginning (<<step1,Step 1>>) type:
 
 ----
-$ ./bin/clear
+$ ./bin/clear all
 ----
 
-== Some notes
+== Some notes/references
 
-* https://github.com/ethereum/go-ethereum/wiki/Contract-Tutorial#installing-a-compiler[Installing a compiler] doesn't work anymore (documentation is out of date https://github.com/ethereum/go-ethereum/issues/14535#issuecomment-364702150[like reported in this issue]).
-* Public testnet faucet: http://faucet.ropsten.be:3001/
+. https://github.com/ethereum/go-ethereum/wiki/Contract-Tutorial#installing-a-compiler[Installing a compiler] doesn't work anymore (documentation is out of date https://github.com/ethereum/go-ethereum/issues/14535#issuecomment-364702150[like reported in this issue]).
+. Ropsten (Ethereum proof of work testnet):
+.. Faucet: http://faucet.ropsten.be:3001/
+.. Explorer: https://ropsten.etherscan.io/
+. https://gist.github.com/cryptogoth/10a98e8078cfd69f7ca892ddbdcf26bc[How to get on Rinkeby Testnet in less than 10 minutes]
+. This warning appears on `geth` while running `rinkeby`: https://github.com/ethereum/go-ethereum/issues/15027["Block sealing failed err=unauthorized"].

@@ -2,7 +2,7 @@
 set +x
 set -e
 
-BASE_DIR=`cd "$(dirname "$0")"; pwd`/..
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
 cd "$BASE_DIR"
 source config
 
@@ -15,11 +15,13 @@ contract=contracts/HelloWorld.sol
 mkdir -p js
 name=`basename "$contract" .sol`
 
+# tag::solc[]
 result=`solc --optimize --combined-json abi,bin $contract 2> compile.log` || {
   echo -e "Error while compiling $1:\n"
   cat compile.log
   exit 1
 }
+# end::solc[]
 
 echo "Generating js/${name}.js ..."
 

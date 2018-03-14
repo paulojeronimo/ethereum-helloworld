@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
+source "$BASE_DIR"/config
+
+cd "$BASE_DIR"/java
+
+op=mvn
+[ "$1" = "generate" ] && op=generate || address=$1
+
+case "$op" in
+    generate)
+        dir=target/solidity
+        mkdir -p $dir
+        solc "$BASE_DIR"/contracts/HelloWorld.sol --overwrite --bin --abi -o $dir
+        "$BASE_DIR"/bin/web3j solidity generate $dir/HelloWorld.bin $dir/HelloWorld.abi \
+            -p com.paulojeronimo.web3j_demo.generated \
+            -o src/main/java
+        cp HelloWorldClient.java src/main/java/com/paulojeronimo/web3j_demo/
+        ;;
+    mvn)
+        mvn exec:java -Dexec.mainClass=com.paulojeronimo.web3j_demo.HelloWorldClient -Dexec.args="$account1_file $account1_password $address"
+        ;;
+esac

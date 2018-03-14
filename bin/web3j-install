@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
+cd "$BASE_DIR"
+source config
+
+remove_web3j() {
+    local d=$web3j_dir
+
+    if [ -d "$d" ]
+    then
+      echo "Removing $d ..."
+      rm -rf "$d"
+      rm -f bin/web3j
+    fi
+}
+
+download_web3j() {
+    local d=$backup_dir
+
+    if [ ! -f "$d/$web3j_tar" ]
+    then
+      echo "Downloading $web3j_tar_url to $d ..."
+      mkdir -p "$d"
+      wget -q -c $web3j_tar_url -O "$d/$web3j_tar"
+    fi
+}
+
+install_web3j() {
+    local f=$backup_dir/$web3j_tar
+
+    if [ -f "$f" ]
+    then
+        echo "Installing $f ..."
+        tar xf "$f"
+        ln -sf ../"$web3j_dir"/bin/web3j bin/
+    fi
+}
+
+remove_web3j
+download_web3j
+install_web3j

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set +x
+
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
+source "$BASE_DIR"/config
+
+cd "$BASE_DIR"/java
+
+mvn exec:java -Dexec.mainClass=com.paulojeronimo.web3j_demo.Transfering -Dexec.args="$account1_file $account1_password $account2"

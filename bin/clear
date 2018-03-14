@@ -1,13 +1,24 @@
 #!/usr/bin/env bash
 set +x
 
-BASE_DIR=`cd "$(dirname "$0")"; pwd`/..
+BASE_DIR=`cd "$(dirname "$0")/.."; pwd`
 cd "$BASE_DIR"
 source config
 
+[ "$1" = "all" ] && all=true || all=false
+skip=(README.html bin/web3j node_modules rinkeby rinkeby.log web3j-2.3.1)
+
 gitignore=$(cat .gitignore)
+
+if ! $all
+then
+    for f in ${skip[*]}
+    do
+        gitignore=$(echo $gitignore | sed "s,$f,,g")
+    done
+fi
+
 for f in $gitignore
 do
-  [ "$f" == "README.html" ] && continue
-  rm -rf "$f"
+    rm -rf "$f"
 done

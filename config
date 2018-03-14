@@ -1,8 +1,30 @@
 #!/bin/bash
 
 DEBUG=${DEBUG:-false}
-geth_dir=eth_private
-geth_passwords=${geth_dir}/passwords.txt
-geth_log=${geth_dir}/geth.stderr.log
+
+base_name=`basename "$BASE_DIR"`
+
+# backup directory (outside of this repo)
+backup_dir="$BASE_DIR"/../$base_name.backup
+
+# private network
+geth_home="$BASE_DIR"/eth_private
+geth_passwords=${geth_home}/passwords.txt
+geth_log=${geth_home}/geth.stderr.log
+
+# web3j configuration
+web3j_ver=2.3.1
+web3j_tar_url=https://github.com/web3j/web3j/releases/download/v${web3j_ver}/web3j-${web3j_ver}.tar
+web3j_tar=${web3j_tar_url##*/}
+web3j_dir=`basename $web3j_tar .tar`
+
+# accounts
+account1_file="$BASE_DIR"/eth_private/keystore/UTC--2017-09-04T13-54-54.151387938Z--b647f8302824903199a2137d38d882b734c38bb3
+account1_password=nun
+account2=2ab9868fb0903c5029e0cc3914b0e51333c51571
+
+# rinkeby network
+#rinkeby_home=~/Library/Ethereum/rinkeby/ #macOS default dir
+rinkeby_home="$BASE_DIR"/rinkeby
 
 $DEBUG && set -x || true
