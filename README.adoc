@@ -13,6 +13,14 @@ Paulo Jerônimo <paulojeronimo@gmail.com>; {localdatetime}
 :yarn: https://yarnpkg.com[Yarn]
 :jdk: http://www.oracle.com/technetwork/java/javase/downloads/index.html[Java Development Kit]
 
+[CAUTION]
+====
+This is a deprecated "Hello world" https://www.youtube.com/playlist?list=PL3jVhh9mXmz8KSba2NOENx_8qb58Ws7hr[published in March 2018]. +
+Please, see how to update it by following this new tutorial (May 2022):
+
+https://paulojeronimo.com/ethereum-helloworld-tutorial/
+====
+
 You can use this project to rapidly start an Ethereum "Hello world" application (using {geth} and {solc}) on your macOS (or Linux) operational system.
 
 == Prerequisites
